@@ -1,3 +1,17 @@
+// 🔥 FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "ISI_PUNYAMU",
+  authDomain: "ISI_PUNYAMU",
+  databaseURL: "https://dasboard-penguna-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ISI_PUNYAMU",
+  storageBucket: "ISI_PUNYAMU",
+  messagingSenderId: "ISI_PUNYAMU",
+  appId: "ISI_PUNYAMU"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 /* SCRIPT AMBULANMU SEYEGAN - WITH EMERGENCY FORM */
 let nomorWA = "6285713322154";
 
@@ -336,10 +350,10 @@ function kirim(jenis) {
     let pesan = '';
 
     if (jenis === 'pasien') {
-        let hari    = document.getElementById('hari1').value;
-        let tgl     = document.getElementById('tanggal1').value;
-        let bulan   = document.getElementById('bulan1').value;
-        let tahun   = document.getElementById('tahun1').value;
+        let hari       = document.getElementById('hari1').value;
+        let tgl        = document.getElementById('tanggal1').value;
+        let bulan      = document.getElementById('bulan1').value;
+        let tahun      = document.getElementById('tahun1').value;
         let tglLengkap = [hari, tgl, bulan, tahun].filter(Boolean).join(' ');
 
         pesan = `*🏥 PERMOHONAN AMBULANS - PASIEN*
@@ -362,11 +376,21 @@ ${document.getElementById('sherlock').value}
 📝 Keterangan Tambahan:
 ${document.getElementById('keterangan1').value || '-'}`;
 
+        // 🔥 Simpan ke Firebase SETELAH pesan disiapkan
+        simpanKeFirebase({
+            jenis: "Pasien",
+            jam: document.getElementById('jam1').value || '-',
+            dari: document.getElementById('sherlock').value,
+            tujuan: document.getElementById('alamatAntar1').value || '-',
+            status: "Menunggu",
+            nama: document.getElementById('nama1').value
+        });
+
     } else if (jenis === 'jenazah') {
-        let hari    = document.getElementById('hari2').value;
-        let tgl     = document.getElementById('tanggal2').value;
-        let bulan   = document.getElementById('bulan2').value;
-        let tahun   = document.getElementById('tahun2').value;
+        let hari       = document.getElementById('hari2').value;
+        let tgl        = document.getElementById('tanggal2').value;
+        let bulan      = document.getElementById('bulan2').value;
+        let tahun      = document.getElementById('tahun2').value;
         let tglLengkap = [hari, tgl, bulan, tahun].filter(Boolean).join(' ');
 
         pesan = `*🏳️ PERMOHONAN AMBULANS - JENAZAH*
@@ -387,11 +411,21 @@ ${document.getElementById('maps').value}
 📝 Keterangan Tambahan:
 ${document.getElementById('keterangan2').value || '-'}`;
 
+        // 🔥 Simpan ke Firebase SETELAH pesan disiapkan
+        simpanKeFirebase({
+            jenis: "Jenazah",
+            jam: document.getElementById('jam2').value || '-',
+            dari: document.getElementById('maps').value,
+            tujuan: document.getElementById('alamatAntar2').value || '-',
+            status: "Menunggu",
+            nama: document.getElementById('nama2').value
+        });
+
     } else if (jenis === 'emergency') {
-        let hari    = document.getElementById('hari3').value;
-        let tgl     = document.getElementById('tanggal3').value;
-        let bulan   = document.getElementById('bulan3').value;
-        let tahun   = document.getElementById('tahun3').value;
+        let hari       = document.getElementById('hari3').value;
+        let tgl        = document.getElementById('tanggal3').value;
+        let bulan      = document.getElementById('bulan3').value;
+        let tahun      = document.getElementById('tahun3').value;
         let tglLengkap = [hari, tgl, bulan, tahun].filter(Boolean).join(' ');
 
         pesan = `*🚨 EMERGENCY - PERMOHONAN AMBULANS DARURAT 🚨*
@@ -416,6 +450,16 @@ ${document.getElementById('sherlockEmg').value}
 ${document.getElementById('keterangan3').value || '-'}
 
 _Mohon segera direspon. Terima kasih._`;
+
+        // 🔥 Simpan ke Firebase SETELAH pesan disiapkan
+        simpanKeFirebase({
+            jenis: "Emergency",
+            jam: document.getElementById('jam3').value || '-',
+            dari: document.getElementById('sherlockEmg').value,
+            tujuan: document.getElementById('tujuanEmg').value || '-',
+            status: "DARURAT",
+            nama: document.getElementById('nama3').value
+        });
     }
 
     if (pesan) {
@@ -454,3 +498,7 @@ window.onload = function () {
     updateTanggalMax('bulan3', 'tanggal3');
     loadData();
 };
+
+function simpanKeFirebase(data) {
+    db.ref("jadwal").push(data);
+}
