@@ -377,14 +377,13 @@ ${document.getElementById('sherlock').value}
 ${document.getElementById('keterangan1').value || '-'}`;
 
         // 🔥 Simpan ke Firebase SETELAH pesan disiapkan
-        simpanKeFirebase({
+    simpanKeFirebase({
             jenis: "Pasien",
             jam: document.getElementById('jam1').value || '-',
             dari: document.getElementById('sherlock').value,
             tujuan: document.getElementById('alamatAntar1').value || '-',
-            status: "Menunggu",
             nama: document.getElementById('nama1').value
-        });
+        }, [hari, tgl, bulan, tahun].filter(Boolean).join(' '));
 
     } else if (jenis === 'jenazah') {
         let hari       = document.getElementById('hari2').value;
@@ -412,14 +411,13 @@ ${document.getElementById('maps').value}
 ${document.getElementById('keterangan2').value || '-'}`;
 
         // 🔥 Simpan ke Firebase SETELAH pesan disiapkan
-        simpanKeFirebase({
+    simpanKeFirebase({
             jenis: "Jenazah",
             jam: document.getElementById('jam2').value || '-',
             dari: document.getElementById('maps').value,
             tujuan: document.getElementById('alamatAntar2').value || '-',
-            status: "Menunggu",
             nama: document.getElementById('nama2').value
-        });
+        }, [hari, tgl, bulan, tahun].filter(Boolean).join(' '));
 
     } else if (jenis === 'emergency') {
         let hari       = document.getElementById('hari3').value;
@@ -457,13 +455,12 @@ _Mohon segera direspon. Terima kasih._`;
             jam: document.getElementById('jam3').value || '-',
             dari: document.getElementById('sherlockEmg').value,
             tujuan: document.getElementById('tujuanEmg').value || '-',
-            status: "DARURAT",
             nama: document.getElementById('nama3').value
-        });
+        }, [hari, tgl, bulan, tahun].filter(Boolean).join(' '));
     }
 
     if (pesan) {
-        window.open(`https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`);
+       window.open(`https://wa.me/6285713322154?text=${encodeURIComponent(pesan)}`);
     }
 }
 
@@ -499,6 +496,6 @@ window.onload = function () {
     loadData();
 };
 
-function simpanKeFirebase(data) {
-    db.ref("jadwal").push(data);
+function simpanKeFirebase(data, tanggal) {
+    db.ref("jadwal/" + tanggal).push(data);
 }
